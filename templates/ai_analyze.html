@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Phân tích AI{% endblock %}
+{% block content %}
+<div class="form-container" style="max-width: 900px;">
+    <h2>🤖 Phân tích Tài chính bằng AI</h2>
+    <p style="color: #6b7280; margin-bottom: 24px;">
+        AI sẽ phân tích thu nhập, chi tiêu và đưa ra gợi ý kế hoạch tiết kiệm dựa trên mục tiêu của bạn.
+    </p>
+    
+    <button id="analyzeBtn" class="btn btn-primary" onclick="runAnalysis()">
+        🔍 Bắt đầu phân tích
+    </button>
+    
+    <div id="loading" style="display:none; text-align:center; margin:30px 0;">
+        <p>⏳ Đang phân tích... (có thể mất 10-20 giây)</p>
+    </div>
+    
+    <div id="result" style="display:none; margin-top:30px;">
+        <h3>📊 Kết quả phân tích:</h3>
+        <div id="analysisContent" style="background:#f9fafb; padding:20px; border-radius:8px; white-space:pre-wrap; line-height:1.8;">
+        </div>
+    </div>
+    
+    <div id="error" style="display:none; margin-top:20px;" class="alert alert-error"></div>
+</div>
+
+<script>
+async function runAnalysis() {
+    const btn = document.getElementById('analyzeBtn');
+    const loading = document.getElementById('loading');
+    const result = document.getElementById('result');
+    const error = document.getElementById('error');
+    const content = document.getElementById('analysisContent');
+    
+    btn.disabled = true;
+    loading.style.display = 'block';
+    result.style.display = 'none';
+    error.style.display = 'none';
+    
+    try {
+        const response = await fetch('/ai/analyze/run', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.success) {
+            content.innerHTML = data.analysis.replace(/\n/g, '<br>');
+            result.style.display = 'block';
+        } else {
+            error.textContent = 'Lỗi: ' + (data.error || 'Không thể phân tích');
+            error.style.display = 'block';
+        }
+    } catch (err) {
+        error.textContent = 'Lỗi kết nối: ' + err.message;
+        error.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        loading.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

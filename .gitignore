@@ -1,0 +1,54 @@
+# ============================
+# SECRETS & ENVIRONMENT
+# ============================
+.env
+.env.local
+.env.*.local
+
+# ============================
+# DATABASE FILES
+# ============================
+*.db
+*.sqlite
+*.sqlite3
+dev.db
+prisma/dev.db
+
+# ============================
+# PYTHON
+# ============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ============================
+# IDE & EDITORS
+# ============================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================
+# LOGS
+# ============================
+*.log
+logs/
+pip-log.txt
+
+# ============================
+# DISTRIBUTION / PACKAGING
+# ============================
+dist/
+build/
+*.egg-info/
+.eggs/

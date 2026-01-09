@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h2>Mục tiêu Tiết kiệm</h2>
+    <a href="{{ url_for('new_goal') }}" class="btn btn-primary">+ Thêm mục tiêu</a>
+</div>
+
+<!-- Tổng quan -->
+<div class="stats">
+    <div class="stat-card">
+        <span class="icon">🎯</span>
+        <div>
+            <p class="label">Tổng mục tiêu</p>
+            <p class="value">{{ summary.totalTarget | format_currency }}</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <span class="icon">💰</span>
+        <div>
+            <p class="label">Đã tiết kiệm</p>
+            <p class="value success">{{ summary.totalCurrent | format_currency }}</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <span class="icon">📊</span>
+        <div>
+            <p class="label">Tiến độ</p>
+            <p class="value">{{ summary.overallProgress }}%</p>
+        </div>
+    </div>
+</div>
+
+<!-- Danh sách mục tiêu -->
+{% if summary.goals %}
+<div class="goals-grid">
+    {% for goal in summary.goals %}
+    <div class="goal-card">
+        <h3>{{ goal.name }}</h3>
+        {% if goal.deadline %}
+        <p class="deadline">🗓️ {{ goal.deadline | format_date }}</p>
+        {% endif %}
+        
+        <div class="progress-section">
+            <div class="amounts">
+                <span class="current">{{ goal.currentAmount | format_currency }}</span>
+                <span class="target">/ {{ goal.targetAmount | format_currency }}</span>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ goal.progress }}%"></div>
+            </div>
+            <p class="progress-text">{{ goal.progress }}% hoàn thành</p>
+        </div>
+        
+        <!-- Form thêm tiền nhanh -->
+        <form method="POST" action="{{ url_for('add_amount', goal_id=goal.id) }}" class="quick-add">
+            <input type="number" name="amount" placeholder="Số tiền thêm" step="1000" min="0" required>
+            <button type="submit" class="btn btn-sm btn-success">+ Thêm</button>
+        </form>
+        
+        <div class="actions">
+            {% if ai_enabled %}
+            <a href="{{ url_for('ai_plan_goal', goal_id=goal.id) }}" class="btn btn-sm" style="background:#10b981; color:white;">🤖 Kế hoạch AI</a>
+            {% endif %}
+            <a href="{{ url_for('edit_goal', goal_id=goal.id) }}" class="btn btn-sm">Sửa</a>
+            <form method="POST" action="{{ url_for('delete_goal', goal_id=goal.id) }}" style="display:inline" 
+                  onsubmit="return confirm('Xóa mục tiêu {{ goal.name }}?')">
+                <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="icon-large">🎯</span>
+    <h3>Chưa có mục tiêu nào</h3>
+    <p>Tạo mục tiêu đầu tiên để bắt đầu tiết kiệm</p>
+    <a href="{{ url_for('new_goal') }}" class="btn btn-primary">+ Tạo mục tiêu</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo mục tiêu mới{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Tạo mục tiêu tiết kiệm mới</h2>
+    
+    <form method="POST" action="{{ url_for('create_goal') }}">
+        <div class="form-group">
+            <label for="name">Tên mục tiêu *</label>
+            <input type="text" id="name" name="name" required 
+                   placeholder="VD: Mua xe, Du lịch, Quỹ khẩn cấp">
+        </div>
+        
+        <div class="form-group">
+            <label for="targetAmount">Số tiền mục tiêu (đ) *</label>
+            <input type="number" id="targetAmount" name="targetAmount" required 
+                   min="0" step="1000" placeholder="VD: 50000000">
+        </div>
+        
+        <div class="form-group">
+            <label for="deadline">Thời hạn (tùy chọn)</label>
+            <input type="date" id="deadline" name="deadline">
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Tạo mục tiêu</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Kế hoạch AI - {{ goal.name }}{% endblock %}
+{% block content %}
+<div class="form-container" style="max-width: 900px;">
+    <h2>🎯 Kế hoạch tiết kiệm cho: {{ goal.name }}</h2>
+    
+    <div style="background:#f3f4f6; padding:15px; border-radius:8px; margin-bottom:20px;">
+        <p><strong>Mục tiêu:</strong> {{ goal.targetAmount | format_currency }}</p>
+        <p><strong>Đã có:</strong> {{ goal.currentAmount | format_currency }}</p>
+        <p><strong>Còn thiếu:</strong> {{ (goal.targetAmount - goal.currentAmount) | format_currency }}</p>
+        {% if goal.deadline %}
+        <p><strong>Thời hạn:</strong> {{ goal.deadline | format_date }}</p>
+        {% endif %}
+    </div>
+    
+    <button id="generateBtn" class="btn btn-primary" onclick="generatePlan()">
+        ✨ Tạo kế hoạch bằng AI
+    </button>
+    
+    <div id="loading" style="display:none; text-align:center; margin:30px 0;">
+        <p>⏳ Đang tạo kế hoạch... (10-20 giây)</p>
+    </div>
+    
+    <div id="result" style="display:none; margin-top:30px;">
+        <h3>📋 Kế hoạch của bạn:</h3>
+        <div id="planContent" style="background:#f9fafb; padding:20px; border-radius:8px; white-space:pre-wrap; line-height:1.8;">
+        </div>
+    </div>
+    
+    <div id="error" style="display:none; margin-top:20px;" class="alert alert-error"></div>
+    
+    <div style="margin-top:30px;">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>
+
+<script>
+async function generatePlan() {
+    const btn = document.getElementById('generateBtn');
+    const loading = document.getElementById('loading');
+    const result = document.getElementById('result');
+    const error = document.getElementById('error');
+    const content = document.getElementById('planContent');
+    
+    btn.disabled = true;
+    loading.style.display = 'block';
+    result.style.display = 'none';
+    error.style.display = 'none';
+    
+    try {
+        const response = await fetch('/ai/plan/{{ goal.id }}/generate', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.success) {
+            content.innerHTML = data.plan.replace(/\n/g, '<br>');
+            result.style.display = 'block';
+        } else {
+            error.textContent = 'Lỗi: ' + (data.error || 'Không thể tạo kế hoạch');
+            error.style.display = 'block';
+        }
+    } catch (err) {
+        error.textContent = 'Lỗi kết nối: ' + err.message;
+        error.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        loading.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

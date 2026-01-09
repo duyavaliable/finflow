@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quản lý Tiết kiệm{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">💰 FinFlow</h1>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <a href="{{ url_for('index') }}" class="nav-link">Trang chủ</a>
+                {% if ai_enabled %}
+                <a href="{{ url_for('ai_analyze') }}" class="nav-link" style="background:rgba(255,255,255,0.15);">🤖 AI Advisor</a>
+                {% endif %}
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('profile') }}" class="nav-link">{{ current_user.username if current_user else 'Tài khoản' }}</a>
+                    <a href="{{ url_for('logout') }}" class="nav-link">Đăng xuất</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-link">Đăng nhập</a>
+                    <a href="{{ url_for('register') }}" class="nav-link">Đăng ký</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                        <button onclick="this.parentElement.remove()">×</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2026 FinFlow - Quản lý Tiết kiệm {% if ai_enabled %}| 🤖 Powered by Gemini AI{% endif %}</p>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
